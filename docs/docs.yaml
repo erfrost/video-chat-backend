@@ -1,0 +1,619 @@
+openapi: 3.0.3
+info:
+  title: Video - chat
+  version: 1.0.11
+servers:
+  - url: http://localhost:8080/api/
+    description: Dev server
+paths:
+  /auth/signUp:
+    post:
+      summary: Регистрация
+      tags:
+        - Auth
+      parameters:
+        - name: email
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: phone
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: nickname
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: password
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: gender
+          description: ИЛИ male ИЛИ female!!!!!!!!!!!
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: dateBirth
+          description: Дата рождения в формате день.месяц.год
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: avatar
+          description: Строка - url изображения, которое уже сохранено в папке на бэке, например https://api.webcam.ru/images/image.png
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: passport
+          description: Фотки паспорта, как и avatar, массив url изображений. Предварительно нужно их загрузить отдельным запросом. Обязательно только при gender = female
+          in: query
+          required: false
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Успешно
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  refreshToken:
+                    type: string
+                    default: "4234238989184"
+                  accessToken:
+                    type: string
+                    default: "fhslqoijfjtjeqlfjeucc"
+                  expiresIn:
+                    type: number
+                    default: 3600
+                  userId:
+                    type: string
+                    default: "q1we235rt8yui4op"
+  /auth/signIn:
+    post:
+      summary: Вход в аккаунт
+      tags:
+        - Auth
+      parameters:
+        - name: phone
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: password
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Успешно
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  refreshToken:
+                    type: string
+                    default: "4234238989184"
+                  accessToken:
+                    type: string
+                    default: "fhslqoijfjtjeqlfjeucc"
+                  expiresIn:
+                    type: number
+                    default: 3600
+                  userId:
+                    type: string
+                    default: "q1we235rt8yui4op"
+  /auth/token:
+    post:
+      summary: Обновление токена
+      tags:
+        - Auth
+      parameters:
+        - name: refresh_token
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Успешно
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  refreshToken:
+                    type: string
+                    default: "4234238989184"
+                  accessToken:
+                    type: string
+                    default: "fhslqoijfjtjeqlfjeucc"
+                  expiresIn:
+                    type: number
+                    default: 3600
+                  userId:
+                    type: string
+                    default: "q1we235rt8yui4op"
+  /user:
+    get:
+      summary: Получение информации о пользователе
+      tags:
+        - User
+      parameters:
+        - name: access_token
+          in: header
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Успешно
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  _id:
+                    type: string
+                    default: "66865fe1afc7b5cb31ca27d7"
+                  email:
+                    type: string
+                    default: "email@gmail.com"
+                  phone:
+                    type: number
+                    default: "+7 999 888 77 66"
+                  nickname:
+                    type: string
+                    default: "Дмитрий Иванов"
+                  gender:
+                    type: string
+                    default: "male"
+                  dateBirth:
+                    type: string
+                    default: "10.10.2000"
+                  avatar:
+                    type: string
+                    default: "http://localhost:8080/image.png"
+                  passportIsVerified:
+                    type: boolean
+                    default: "Придет типа boolean, но только если женщина. У мужчин не приходит"
+                  createdAt:
+                    type: string
+                    default: "2024-07-04T09:00:56.990Z"
+                  updatedAt:
+                    type: string
+                    default: "2024-07-04T09:00:56.990Z"
+                  __v:
+                    type: number
+                    default: 0
+  /user/catalog?limit=30&offset=0:
+    get:
+      summary: Каталог девушек
+      tags:
+        - User
+      parameters:
+        - name: access_token
+          in: header
+          required: true
+          schema:
+            type: string
+        - name: limit
+          in: query
+          schema:
+            type: string
+        - name: offset
+          in: query
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Успешно
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  girls:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        _id:
+                          type: string
+                          default: "66865fe1afc7b5cb31ca27d7"
+                        nickname:
+                          type: string
+                          default: "Дмитрий Иванов"
+                        avatar:
+                          type: string
+                          default: "http://localhost:8080/image.png"
+                        isOnline:
+                          type: boolean
+                          default: false
+                        createdAt:
+                          type: string
+                          default: "2024-07-04T09:00:56.990Z"
+                        updatedAt:
+                          type: string
+                          default: "2024-07-04T09:00:56.990Z"
+                        __v:
+                          type: number
+                          default: 0
+  /user/update:
+    put:
+      summary: Обновление данных пользователя
+      tags:
+        - User
+      parameters:
+        - name: access_token
+          in: header
+          required: true
+          schema:
+            type: string
+        - name: nickname
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: email
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: phone
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: password
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Успешно
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  _id:
+                    type: string
+                    default: "66865fe1afc7b5cb31ca27d7"
+                  email:
+                    type: string
+                    default: "email@gmail.com"
+                  phone:
+                    type: number
+                    default: "+7 999 888 77 66"
+                  nickname:
+                    type: string
+                    default: "Дмитрий Иванов"
+                  gender:
+                    type: string
+                    default: "male"
+                  dateBirth:
+                    type: string
+                    default: "10.10.2000"
+                  avatar:
+                    type: string
+                    default: "http://localhost:8080/image.png"
+                  passportIsVerified:
+                    type: boolean
+                    default: "Придет типа boolean, но только если женщина. У мужчин не приходит"
+                  createdAt:
+                    type: string
+                    default: "2024-07-04T09:00:56.990Z"
+                  updatedAt:
+                    type: string
+                    default: "2024-07-04T09:00:56.990Z"
+                  __v:
+                    type: number
+                    default: 0
+  /images/singleUpload:
+    post:
+      summary: Загрузка одного изображения
+      tags:
+        - Images
+      parameters:
+        - name: access_token
+          in: header
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                imageFormData:
+                  type: string
+                  format: binary
+
+      responses:
+        "200":
+          description: Успешно
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  avatar_path:
+                    type: string
+                    default: "http://localhost:8000/images/7e95e2c9-f7ed-4a2d-9dd4-d5a679e731ac-korobka.png"
+  /images/multipleUpload:
+    post:
+      summary: Загрузка нескольких изображений
+      tags:
+        - Images
+      parameters:
+        - name: access_token
+          in: header
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                images[]:
+                  type: array
+                  items:
+                    type: string
+                    format: binary
+      responses:
+        "200":
+          description: Успешно
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  passport_paths:
+                    type: string
+                    default:
+                      - "http://localhost:8000/images/7e95e2c9-f7ed-4a2d-9dd4-d5a679e731ac-korobka.png"
+                      - "http://localhost:8000/images/7e95e2c9-f7ed-4a2d-9dd4-d5a679e731ac-korobka.png"
+  /admin/auth:
+    post:
+      summary: Авторизация в админке
+      tags:
+        - Admin
+      parameters:
+        - name: login
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: password
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Успешно
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  admin_access_token:
+                    type: string
+                    default: "09f8fbba-fbe8-4b63-a2e5-fa1ed6d2tf00"
+  /admin/notVerifiedGirls:
+    get:
+      summary: Выдача всех девушек с неверифицированными паспортами
+      tags:
+        - Admin
+      parameters:
+        - name: admin_access_token
+          in: header
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Успешно
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  not_verified_girls:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        _id:
+                          type: string
+                          default: "66865fe1afc7b5cb31ca27d7"
+                        nickname:
+                          type: string
+                          default: "Дмитрий Иванов"
+                        avatar:
+                          type: string
+                          default: "http://localhost:8080/image.png"
+                        passport:
+                          type: array
+                          items:
+                            type: string
+                          default:
+                            - "http://localhost:8080/image.png"
+                            - "http://localhost:8080/image.png"
+                        passportIsVerified:
+                          type: boolean
+                          default: "Придет типа boolean, но только если женщина. У мужчин не приходит"
+                        createdAt:
+                          type: string
+                          default: "2024-07-04T09:00:56.990Z"
+                        updatedAt:
+                          type: string
+                          default: "2024-07-04T09:00:56.990Z"
+                        __v:
+                          type: number
+                          default: 0
+  /admin/verificationGirl/{user_id}:
+    post:
+      summary: Верификация паспорта девушки
+      tags:
+        - Admin
+      parameters:
+        - name: admin_access_token
+          in: header
+          required: true
+          schema:
+            type: string
+        - name: user_id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Успешно
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  _id:
+                    type: string
+                    default: "66865fe1afc7b5cb31ca27d7"
+                  nickname:
+                    type: string
+                    default: "Дмитрий Иванов"
+                  avatar:
+                    type: string
+                    default: "http://localhost:8080/image.png"
+                  passport:
+                    type: array
+                    items:
+                      type: string
+                    default:
+                      - "http://localhost:8080/image.png"
+                      - "http://localhost:8080/image.png"
+                  passportIsVerified:
+                    type: boolean
+                    default: "Придет типа boolean, но только если женщина. У мужчин не приходит"
+                  createdAt:
+                    type: string
+                    default: "2024-07-04T09:00:56.990Z"
+                  updatedAt:
+                    type: string
+                    default: "2024-07-04T09:00:56.990Z"
+                  __v:
+                    type: number
+                    default: 0
+  /broadcast/start:
+    post:
+      summary: Запуск трансляции
+      tags:
+        - Broadcast
+      parameters:
+        - name: access_token
+          in: header
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Успешно
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  broadcast_id:
+                    type: string
+                    default: "668d074538a0e1d9f425e1d8"
+  /broadcast/end:
+    post:
+      summary: Завершение трансляции
+      tags:
+        - Broadcast
+      parameters:
+        - name: access_token
+          in: header
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Успешно
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    default: "success"
+  /broadcast/online?limit=30&offset=0:
+    get:
+      summary: Выдача активных трансляций
+      tags:
+        - Broadcast
+      parameters:
+        - name: access_token
+          in: header
+          required: true
+          schema:
+            type: string
+        - name: limit
+          in: query
+          schema:
+            type: string
+        - name: offset
+          in: query
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Успешно
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  broadcasts:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        _id:
+                          type: string
+                          default: "66865fe1afc7b5cb31ca27d7"
+                        userId:
+                          type: string
+                          default: "66865fe1afc7b5cb31ca27d7"
+                        nickname:
+                          type: string
+                          default: "Дмитрий Иванов"
+                        avatar:
+                          type: string
+                          default: "http://localhost:8080/image.png"
+                        createdAt:
+                          type: string
+                          default: "2024-07-04T09:00:56.990Z"
+                        updatedAt:
+                          type: string
+                          default: "2024-07-04T09:00:56.990Z"
+                        __v:
+                          type: number
+                          default: 0
