@@ -10,7 +10,7 @@ router.get("/", auth, async (req, res) => {
     const { _id } = req.user;
 
     const currentUser = await User.findOne({ _id }).select(
-      "-password -passport"
+      "-password -passport -isOnline"
     );
     if (currentUser.gender === "male") {
       delete currentUser.passportIsVerified;
@@ -35,16 +35,12 @@ router.get("/catalog", auth, async (req, res) => {
       girls = await User.find({ passportIsVerified: true, gender: "female" })
         .skip(offset)
         .limit(limit)
-        .select(
-          "-email -phone -password -dateBirth -passport -gender -passportIsVerified"
-        );
+        .select("nickname avatar isOnline");
     } else {
       girls = await User.find({
         passportIsVerified: true,
         gender: "female",
-      }).select(
-        "-email -phone -password -dateBirth -passport -gender -passportIsVerified"
-      );
+      }).select("nickname avatar isOnline");
     }
 
     res.status(200).json({ girls });
@@ -55,19 +51,99 @@ router.get("/catalog", auth, async (req, res) => {
   }
 });
 
-router.put("/update", auth, async (req, res) => {
+router.put("/update/nickname", auth, async (req, res) => {
   try {
-    const { nickname, email, phone, password } = req.body;
+    const { nickname } = req.body;
     const { _id: userId } = req.user;
 
+    if (!nickname) {
+      return res.status(400).json({
+        message: "Не введён никнейм",
+      });
+    }
+
+    const updatedUser = await User.findOneAndUpdate(
+      { _id: userId },
+      { nickname },
+      { new: true }
+    ).select("-password -passport");
+
+    return res.status(200).json(updatedUser);
+  } catch (error) {
+    return res
+      .status(400)
+      .json({ message: "На сервере произошла ошибка. Попробуйте позднее" });
+  }
+});
+
+router.put("/update/email", auth, async (req, res) => {
+  try {
+    const { email } = req.body;
+    const { _id: userId } = req.user;
+
+    if (!email) {
+      return res.status(400).json({
+        message: "Не введёна почта",
+      });
+    }
     if (!validator.isEmail(email)) {
       return res.status(400).json({
         message: "Некорректный email",
       });
     }
+
+    const updatedUser = await User.findOneAndUpdate(
+      { _id: userId },
+      { email },
+      { new: true }
+    ).select("-password -passport");
+
+    return res.status(200).json(updatedUser);
+  } catch (error) {
+    return res
+      .status(400)
+      .json({ message: "На сервере произошла ошибка. Попробуйте позднее" });
+  }
+});
+
+router.put("/update/phone", auth, async (req, res) => {
+  try {
+    const { phone } = req.body;
+    const { _id: userId } = req.user;
+
+    if (!phone) {
+      return res.status(400).json({
+        message: "Не введён номер телефона",
+      });
+    }
     if (!validator.isMobilePhone(phone)) {
       return res.status(400).json({
         message: "Некорректный номер телефона",
+      });
+    }
+
+    const updatedUser = await User.findOneAndUpdate(
+      { _id: userId },
+      { phone },
+      { new: true }
+    ).select("-password -passport");
+
+    return res.status(200).json(updatedUser);
+  } catch (error) {
+    return res
+      .status(400)
+      .json({ message: "На сервере произошла ошибка. Попробуйте позднее" });
+  }
+});
+
+router.put("/update/password", auth, async (req, res) => {
+  try {
+    const { password } = req.body;
+    const { _id: userId } = req.user;
+
+    if (!password) {
+      return res.status(400).json({
+        message: "Не введён пароль",
       });
     }
     if (password.length < 8) {
@@ -86,9 +162,60 @@ router.put("/update", auth, async (req, res) => {
 
     const updatedUser = await User.findOneAndUpdate(
       { _id: userId },
-      { nickname, email, phone, password: hashedPassword },
+      { password: hashedPassword },
       { new: true }
     ).select("-password -passport");
+
+    return res.status(200).json(updatedUser);
+  } catch (error) {
+    return res
+      .status(400)
+      .json({ message: "На сервере произошла ошибка. Попробуйте позднее" });
+  }
+});
+
+router.put("/update/avatar", auth, async (req, res) => {
+  try {
+    const { avatar } = req.body;
+    const { _id: userId } = req.user;
+
+    if (!avatar) {
+      return res.status(400).json({
+        message: "Не введён url изображения",
+      });
+    }
+
+    const updatedUser = await User.findOneAndUpdate(
+      { _id: userId },
+      { avatar },
+      { new: true }
+    ).select("-password -passport");
+
+    return res.status(200).json(updatedUser);
+  } catch (error) {
+    return res
+      .status(400)
+      .json({ message: "На сервере произошла ошибка. Попробуйте позднее" });
+  }
+});
+
+router.put("/update/passport", auth, async (req, res) => {
+  try {
+    const { passport } = req.body;
+    const { _id: userId } = req.user;
+
+    if (!passport.length) {
+      return res.status(400).json({
+        message: "Массив изображений пустой",
+      });
+    }
+
+    const updatedUser = await User.findOneAndUpdate(
+      { _id: userId },
+      { passport },
+      { new: true }
+    ).select("-password -passport");
+
     return res.status(200).json(updatedUser);
   } catch (error) {
     return res

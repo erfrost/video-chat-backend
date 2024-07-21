@@ -19,7 +19,6 @@ module.exports = function messageHandlers(io, socket) {
   });
 
   socket.on("message:add", async (message) => {
-    console.log(message);
     if (!messages[roomId]) {
       messages[roomId] = [];
     }

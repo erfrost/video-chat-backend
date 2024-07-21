@@ -19,20 +19,12 @@ router.post("/signUp", async (req, res) => {
       nickname,
       password,
       gender,
+      dateBirth,
       avatar,
       passport,
-      dateBirth,
     } = req.body;
 
-    if (
-      !email ||
-      !phone ||
-      !nickname ||
-      !password ||
-      !gender ||
-      !dateBirth ||
-      (gender == "female" && !passport)
-    ) {
+    if (!email || !phone || !nickname || !password || !gender || !dateBirth) {
       return res.status(400).json({
         message: "Проверьте правильность введенных данных",
       });
@@ -65,10 +57,10 @@ router.post("/signUp", async (req, res) => {
       });
     }
 
-    const existingUser = await User.findOne({ $or: [{ email }, { phone }] });
+    const existingUser = await User.findOne({ phone });
     if (existingUser) {
       return res.status(400).json({
-        message: "Данный пользователь уже зарегистрирован",
+        message: "Пользователь с этим номером телефона уже зарегестрирован",
       });
     }
 
@@ -106,7 +98,7 @@ router.post("/signIn", async (req, res) => {
     const existingUser = await User.findOne({ phone });
     if (!existingUser) {
       return res.status(201).send({
-        message: "Неверное имя пользователя или пароль",
+        message: "Неверный номер телефона или пароль",
       });
     }
 
@@ -116,7 +108,7 @@ router.post("/signIn", async (req, res) => {
     );
     if (!isPasswordEqual) {
       return res.status(201).send({
-        message: "Неверное имя пользователя или пароль",
+        message: "Неверный номер телефона или пароль",
       });
     }
 

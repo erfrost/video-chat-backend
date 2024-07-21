@@ -31,7 +31,7 @@ router.get("/notVerifiedGirls", adminAuth, async (req, res) => {
   try {
     const notVerifiedGirls = await User.find({
       passportIsVerified: false,
-    }).select("-email -phone -password -dateBirth");
+    }).select("nickname avatar passport passportIsVerified dateBirth");
 
     res.status(200).json({
       not_verified_girls: notVerifiedGirls,
@@ -56,7 +56,7 @@ router.post("/verificationGirl/:user_id", adminAuth, async (req, res) => {
       user_id,
       { passportIsVerified: true },
       { new: true }
-    ).select("-email -phone -password -dateBirth");
+    ).select("nickname avatar passport passportIsVerified dateBirth");
 
     res.status(200).json({
       girl: currentGirl,
