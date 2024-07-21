@@ -3,7 +3,7 @@ info:
   title: Video - chat
   version: 1.0.11
 servers:
-  - url: http://localhost:8080/api/
+  - url: http://localhost:8000/api/
     description: Dev server
 paths:
   /auth/signUp:
